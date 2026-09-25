@@ -10,33 +10,40 @@ export type PlantAlertSeverity = "NORMAL" | "WARNING" | "CRITICAL";
 
 export interface ProcessStage {
   id: ProcessStageId;
-  name: string;
   code: string;
-  nominalRetentionMin: number;
-  currentLevelPct: number;
+  name: string;
+  isActive: boolean;
+  status: "OPTIMAL" | "ATTENTION" | "CRITICAL" | "OFFLINE" | "BACKWASH";
+  alertSeverity: PlantAlertSeverity;
+  performanceScore: number;
   inflowM3h: number;
   outflowM3h: number;
-  status: "ACTIVE" | "MAINTENANCE" | "BACKWASH" | "ALARM";
+  nominalRetentionMin: number;
   primaryParameter: string;
   primaryValue: number;
   unit: string;
-  thresholdMax: number;
+  currentLevelPct?: number;
 }
 
 export interface WaterQualityTelemetry {
+  ph: number;
+  turbidity: number;
+  residualChlorine: number;
+  flowRate: number;
+  pressure: number;
   timestamp: string;
-  rawTurbidityNtu: number;       // Standar Permenkes < 5 NTU
+  rawTurbidityNtu: number;
   treatedTurbidityNtu: number;
-  rawPh: number;                 // Standar 6.5 - 8.5
+  rawPh: number;
   treatedPh: number;
-  residualChlorineMgL: number;   // Standar 0.2 - 0.5 mg/L
+  residualChlorineMgL: number;
   dissolvedOxygenMgL: number;
-  tdsPpm: number;                // Total Dissolved Solids < 300 ppm
-  totalColiformCfu: number;      // Harus 0 CFU/100ml
-  dosingAlumPpm: number;         // PAC / Alum Koagulan
-  dosingChlorinePpm: number;     // Klorin Disinfeksi
-  dosingLimePpm: number;         // Kapur Ca(OH)2 pH Adjuster
-  flowRateLps: number;           // Liter per detik (Kap. Instalasi: 250 L/s)
+  tdsPpm: number;
+  totalColiformCfu: number;
+  dosingAlumPpm: number;
+  dosingChlorinePpm: number;
+  dosingLimePpm: number;
+  flowRateLps: number;
   dailyProducedM3: number;
 }
 
@@ -44,7 +51,8 @@ export type TariffCategory =
   | "R1_SOSIAL"
   | "R2_RUMAH_TANGGA"
   | "R3_MENENGAH"
-  | "N1_NIAGA_KECIL"
+  | "N1_NIAGA"
+  | "I1_INDUSTRI"
   | "I1_INDUSTRI_BESAR";
 
 export interface WaterCustomer {
@@ -63,4 +71,31 @@ export interface WaterCustomer {
   totalBillIdr: number;
   paymentStatus: "PAID" | "UNPAID" | "OVERDUE";
   meterSerial: string;
+  lastBillingDate?: string;
+}
+
+export type LabCategory = "FISIKA" | "KIMIA_ANORGANIK" | "MIKROBIOLOGI";
+
+export interface LabParameter {
+  id: string;
+  name: string;
+  category: LabCategory;
+  unit: string;
+  standardLimit: number;
+  testValue: number;
+  testMethod: string;
+  isCompliant: boolean;
+}
+
+export interface WaterLabCertificate {
+  certificateNo: string;
+  sampleCode: string;
+  samplingDate: string;
+  testedDate: string;
+  samplingLocation: string;
+  intakeSource: string;
+  notes: string;
+  officerName: string;
+  labHeadName: string;
+  directorName: string;
 }
